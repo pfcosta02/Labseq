@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LabSeq Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        input, button { padding: 10px; font-size: 16px; }
+        #result { margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>LabSeq Service</h1>
+    <p>Enter an index to retrieve the corresponding LabSeq value:</p>
+    <input type="number" id="indexInput" min="0" placeholder="Enter n">
+    <button onclick="getLabseq()">Get l(n)</button>
+    <div id="result"></div>
+
+    <script>
+        async function getLabseq() {
+            const n = document.getElementById('indexInput').value;
+            const resultDiv = document.getElementById('result');
+            if (n === '' || n < 0) {
+                resultDiv.innerHTML = 'Please enter a valid non-negative integer.';
+                return;
+            }
+            try {
+                const response = await fetch(`/labseq/${n}`);
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        resultDiv.innerHTML = 'Invalid input. Please enter a non-negative integer.';
+                    } else {
+                        resultDiv.innerHTML = 'Error retrieving data.';
+                    }
+                    return;
+                }
+                const data = await response.json();
+                resultDiv.innerHTML = `l(${n}) = ${data}`;
+            } catch (error) {
+                resultDiv.innerHTML = 'Error connecting to the server.';
+            }
+        }
+    </script>
+</body>
+</html>
